@@ -12,6 +12,8 @@ Apache running on Linux
 
 PHP shell_exec enabled (may not work for shared webhosts)
 
+Directories must be writable
+
 Instructions:
 
 Modify the reposettings.php file to your liking
