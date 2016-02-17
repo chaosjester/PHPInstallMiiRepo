@@ -9,6 +9,7 @@ The index has a download link to the repo.list, the package.list files are all f
 Requirements:
 
 Apache running on Linux
+
 PHP shell_exec enabled (may not work for shared webhosts)
 
 Instructions:
@@ -17,5 +18,6 @@ Modify the reposettings.php file to your liking
 
 Upload to webhost
 
-Profit
+Go to http://yourrepo.com/repoupdate.php to kick off the update
 
+Profit
