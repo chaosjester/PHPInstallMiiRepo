@@ -21,7 +21,7 @@ require ("reposettings.php");
   <br><br><br><br>
   <div class="container">
     <div class="row">
-      <div class="col s12 m6 offset-s3 offset-m3 center-align">
+      <div class="col s12 m6 offset-m3 center-align">
         <div class="card">
           <span class="card-title"><?php echo $reponame ?></span>
           <div class="card-content">
