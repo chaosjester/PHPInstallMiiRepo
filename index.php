@@ -46,7 +46,7 @@ require ("reposettings.php");
     </div>
     <div class="footer-copyright">
       <div class="container">
-      Created with ChaosJester's PHP InstallMii Repo creator<br>Big thanks to LiquidFenrir for his assistance!
+      Created with ChaosJester's PHP InstallMii Repo creator. Big thanks to LiquidFenrir for his assistance!
       <a class="grey-text text-lighten-4 right" href="https://github.com/chaosjester/PHPInstallMiiRepo" target="_blank">Project GitHub page</a>
       </div>
     </div>
