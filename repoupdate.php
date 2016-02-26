@@ -7,12 +7,12 @@ $repofile = '{"repos":[{"name":"'.$reponame.'","url":"'.$repourl.'"}]}';
 file_put_contents($reporoot.'/repo.list', $repofile);
 
 // Create Shell Script to create package.list
-$packagefile = 'for d in '.$repodir.'/*; do cd ${d} && rm -f package.* && find . -type f | sed s,^./,, > package.tmp && sed "/package.tmp/d" package.tmp > package.list && rm package.tmp  && cd ..; done';
+$packagefile = 'for d in '.$repodir.'/*; do cd ${d} && rm -f package.* && rm -f *.smdh.txt && find . -type f | sed s,^./,, > package.tmp && sed "/package.tmp/d" package.tmp > package.list && rm package.tmp  && cd ..; done';
 file_put_contents($repodir.'/packagelistgen.sh', $packagefile);
 
 // Create SMDH Scraper
 unlink('master.list');
-$scrapefile = 'for f in $(find '.$repodir.' -name "*.smdh"); do printf "name = " > $f.txt && dd if=$f ibs=1 skip=08 count=80 >> $f.txt && printf "\nshort_description = " >> $f.txt && dd if=$f ibs=1 skip=136 count=200 >> $f.txt && printf "\nauthor = " >> $f.txt && dd if=$f ibs=1 skip=392 count=80 >> $f.txt && printf "\n" >> $f.txt && tr -d "\0" < $f.txt >> '.$reporoot.'/master.list; done';
+$scrapefile = 'for f in $(find '.$repodir.' -name "*.smdh"); do printf "name = " > $f.txt && dd if=$f ibs=1 skip=08 count=80 >> $f.txt && printf "\nshort_description = " >> $f.txt && dd if=$f ibs=1 skip=136 count=200 >> $f.txt && printf "\nauthor = " >> $f.txt && dd if=$f ibs=1 skip=392 count=80 >> $f.txt && path=$f && printf "\ncategory = nul\nwebsite = nul\ntype = 3ds\nversion = nul\n" >> $f.txt && echo "dl_path = nul\ninfo_path = ${path#'.$reporoot.'}" >> $f.txt && tr -d "\0" < $f.txt >> '.$reporoot.'/master.list && rm -f $f.txt; done';
 file_put_contents($repodir.'/scrapesmdh.sh', $scrapefile);
 
 // Run shell script to create package.list and scrape SMDH Files
@@ -21,10 +21,12 @@ shell_exec('chmod +x '.$repodir.'/scrapesmdh.sh');
 shell_exec($repodir.'/packagelistgen.sh');
 shell_exec($repodir.'/scrapesmdh.sh');
 
-$smdhfile = file('master.list');
-$smdhinfo = str_replace (array("\r\n", "\n", "\r"), '', $smdhfile);
-
-
+$dir = "./3ds/";
+$apps = array_diff(scandir($dir), array('..', '.', 'packagelistgen.sh', 'scrapesmdh.sh'));
+sort($apps);
+$flipped = array_flip($apps);
+$dl_path = $apps;
+foreach ($dl_path as &$item) { $item = "3ds/".$item."/"; }
 ?>
 <!DOCTYPE html>
 <html>
@@ -41,16 +43,6 @@ $smdhinfo = str_replace (array("\r\n", "\n", "\r"), '', $smdhfile);
 <body>
 <div class="container">
 <?php
-// (2016-02-24, morning utc+1)
-// SO, this new version brings: repo info, "repo" and "packages" fields in the json, and is fully compatible with the bigger one
-// (2016-02-24, 02:30 AM utc+1)
-// this even newer versions changes the keys all by itself, depending on the "fields" array. change the array as you change your scrapper!
-
-// I wouldn't really care about the increased RAM usage of making another array at then if I were you, it's most probably negligeable.
-
-// change these as you like! they are what define your repo for installMii. Could even read them from a settings/config file
-
-addcslashes($repourl, '/');
 $repoInfo = array();
 $repoInfo["name"] = $reponame;
 $repoInfo["author"] = $repoowner;
@@ -62,41 +54,38 @@ $fields[] = "name";
 $fields[] = "short_description";
 $fields[] = "author";
 // those are commented out because your scraper doesnt put them in the master.list yet
-// $fields[] = "category";
-// $fields[] = "website";
-// $fields[] = "type";
-// $fields[] = "version";
+$fields[] = "category";
+$fields[] = "website";
+$fields[] = "type";
+$fields[] = "version";
 $fields[] = "dl_path";
 $fields[] = "info_path";
 
-
-
-$lines = array();
-$file = fopen("master.list", "r");
-if($file) {
-    while(!feof($file)){
-        $line = substr(fgets($file),0,-1);
-        $lines[] = $line;
-    }
+$lines = file("master.list", FILE_IGNORE_NEW_LINES);
+$i = 1;
+for ($i;$i <= sizeof($apps);$i++) {
+  if (strpos($lines[$i*9-1], 'info_path = ') !== false) {
+    $id = explode("/",$lines[$i*9-1]);
+    $lines[$i*9-2] = "dl_path = ".$dl_path[$flipped[$id[2]]];
+    $lines[$i*9-1] = substr($lines[$i*9-1],1);
+  }
 }
-fclose($file);
-
-array_pop($lines);
-$list = array_chunk($lines, 3); // cut the array that contained the lines into pieces to separate each app
+$list = array_chunk($lines, sizeof($fields)); // cut the array that contained the lines into pieces to separate each app
 $size = sizeof($list)-1;
 
 $i = 0;
 for($i;$i <= $size;$i++) { // change the name of keys in the array to make the json compatible with installMii
   $j = 0;
   for($j;$j <= sizeof($fields)-1;$j++) {
-    $list[$i][$fields[$j]] = substr($list[$i][$j],strlen($fields[$j])+3); // remove the "name = ", and things like that to only have the value ("3dscraft", or anything)
-    unset($list[$i][$j]);// remove the old key that is not needed anymore and only take space (and would mess with json_encode)
+    $list[$i][$fields[$j]] = substr($list[$i][$j],strlen($fields[$j])+3); // remove the tags to only have the value
+    if ($list[$i][$fields[$j]] == "nul") { $list[$i][$fields[$j]] = null;}
+    unset($list[$i][$j]); // remove the old key that is not needed anymore and only takes space (and would mess with json_encode)
   }
 }
 
 // create a new array before encoding to get the "repo" and "packages" part correctly
 $formattedjson = json_encode(array("repo"=>$repoInfo, "packages"=>$list));
-
+$formattedjson = str_replace("\/","/",$formattedjson);
 if (!$formattedjson){
 	echo '<div class="col s12 m6 offset-m3">
           <div class="card red darken-1 center-align">
@@ -106,8 +95,6 @@ if (!$formattedjson){
             </div>
           </div>
         </div>';
-
-
 } else {
 echo ' <div class="col s12 m6 offset-m3">
           <div class="card green darken-1 center-align">
@@ -118,7 +105,7 @@ echo ' <div class="col s12 m6 offset-m3">
           </div>
         </div>';
 
-file_put_contents($reporoot.'/packages.json', $formattedjson);
+file_put_contents('./packages.json', $formattedjson);
 };
  ?>
 
