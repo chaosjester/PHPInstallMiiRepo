@@ -2,6 +2,8 @@
 
 This is a PHP front end to compile several files required by the InstallMii 3DS Homebrew app.
 
+You can get InstallMii here - https://gbatemp.net/threads/wip-installmii-graphical-repository-downloader.406097/
+
 This script will create your repo.list, package.list and scrape information from .smdh files to create the packages.json.
 
 This script relies on there being an smdh file present in your homebrew application folders.  If one does not exist, there are tools to create one. If there is no smdh file, it will not be added.  Packages added manually will be removed when the script is run again.
