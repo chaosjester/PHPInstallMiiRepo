@@ -43,17 +43,16 @@ foreach ($dl_path as &$item) { $item = "3ds/".$item."/"; }
 <body>
 <div class="container">
 <?php
+// Big thanks to LiquidFenrir for his assistance (by assistance I mean writing all the code below!)
 $repoInfo = array();
 $repoInfo["name"] = $reponame;
 $repoInfo["author"] = $repoowner;
 $repoInfo["website"] = $repourl;
 
-// comment out/in the fields as you adapt your scraper!
 $fields = array(); // dont comment that one out, will break everything else
 $fields[] = "name";
 $fields[] = "short_description";
 $fields[] = "author";
-// those are commented out because your scraper doesnt put them in the master.list yet
 $fields[] = "category";
 $fields[] = "website";
 $fields[] = "type";
