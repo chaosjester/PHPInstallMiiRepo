@@ -74,7 +74,11 @@ function listdiraux($dir, &$files) {
     if (is_link($filepath))
       continue;
     if (is_file($filepath))
-      $files[] = $filepath;
+      if(strpos($filepath,"package.list") === false) {
+        $files[] = $filepath;
+      } else {
+        continue;
+      }
     else if (is_dir($filepath))
       listdiraux($filepath, $files);
   }
