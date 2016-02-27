@@ -4,7 +4,7 @@ require ('reposettings.php');
 
 // Create repo.list
 $repofile = '{"repos":[{"name":"'.$reponame.'","url":"'.$repourl.'"}]}';
-file_put_contents($reporoot.'/repo.list', $repofile);
+file_put_contents('./repo.list', $repofile);
 
 ?>
 <!DOCTYPE html>
@@ -22,7 +22,11 @@ file_put_contents($reporoot.'/repo.list', $repofile);
 <body>
 <div class="container">
 <?php
+<<<<<<< HEAD
 $apps = array_diff(scandir($repodir), array('..', '.', 'packagelistgen.sh')); // getting all the apps in the 3ds folder
+=======
+$apps = array_diff(scandir("./3ds/"), array('..', '.')); // getting all the apps in the 3ds folder
+>>>>>>> e03f88fd8ad12d7a604d043f2a6844a64b0ad63e
 sort($apps);
 $dl_path = $apps;
 $info_path = $apps;
@@ -46,8 +50,13 @@ $fields[] = "dl_path";
 $fields[] = "info_path";
 
 $i = 0;
+<<<<<<< HEAD
 for($i;$i < sizeof($apps);$i++) { // removing apps from the array if they don't have a .smdh in their folder
   if(is_dir(substr($dl_path[$i],0,-1)) || !file_exists($info_path[$i])) {
+=======
+for($i;$i < sizeof($apps);$i++) { // removing entries from the array if they don't have a .smdh in their folder or are files
+  if(!is_dir(substr($dl_path[$i],0,-1)) || !file_exists($info_path[$i])) {
+>>>>>>> e03f88fd8ad12d7a604d043f2a6844a64b0ad63e
     unset($apps[$i]);
     unset($info_path[$i]);
     unset($dl_path[$i]);

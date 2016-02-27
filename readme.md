@@ -20,6 +20,8 @@ suPHP. phpfcgi or other system that will execute the PHP as your account (may be
 
 Directories must be writable
 
+All of the homebrew apps should be located in "<location of repoupdate.php>/3ds/". They will not be picked up otherwise
+
 An smdh file must be present in the homebrew application folder or this will not pick it up
 
 Instructions:
