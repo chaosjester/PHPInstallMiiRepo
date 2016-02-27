@@ -12,15 +12,11 @@ The index has a download link to the repo.list, the package.list and packages.js
 
 Requirements:
 
-Apache running on Linux
+Apache
 
 suPHP. phpfcgi or other system that will execute the PHP as your account (may be required by shared host users)
 
-PHP shell_exec enabled (may not work for shared webhosts)
-
 Directories must be writable
-
-Ability to run shell commands on server (may require your host to enable shell access)
 
 An smdh file must be present in the homebrew application folder or this will not pick it up
 
@@ -34,4 +30,4 @@ Go to http://yourrepo.com/repoupdate.php to kick off the update
 
 Profit
 
-If you want to automate this, you can set up a cron job "php /path/to/repoupdate.php" with your desired times
+If you want to automate this, you can set up a cron job (*nix) or schedulated task (Windows) "php /path/to/repoupdate.php" with your desired times
