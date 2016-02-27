@@ -22,7 +22,7 @@ file_put_contents($reporoot.'/repo.list', $repofile);
 <body>
 <div class="container">
 <?php
-$apps = array_diff(scandir($repodir), array('..', '.', 'packagelistgen.sh', 'scrapesmdh.sh')); // getting all the apps in the 3ds folder
+$apps = array_diff(scandir($repodir), array('..', '.', 'packagelistgen.sh')); // getting all the apps in the 3ds folder
 sort($apps);
 $dl_path = $apps;
 $info_path = $apps;
@@ -46,8 +46,8 @@ $fields[] = "dl_path";
 $fields[] = "info_path";
 
 $i = 0;
-for($i;$i <=sizeof($apps)-1;$i++) { // removing apps from the array if they don't have a .smdh in their folder
-  if(!file_exists("./".$info_path[$i])) {
+for($i;$i < sizeof($apps);$i++) { // removing apps from the array if they don't have a .smdh in their folder
+  if(is_dir(substr($dl_path[$i],0,-1)) || !file_exists($info_path[$i])) {
     unset($apps[$i]);
     unset($info_path[$i]);
     unset($dl_path[$i]);
@@ -89,7 +89,7 @@ $i=0;
 for($i;$i < sizeof($apps);$i++) {
   $files = listdir(substr($dl_path[$i],0,-1));
   sort($files, SORT_LOCALE_STRING);
-  file_put_contents($dl_path[$i]."package.list",implode("\n", $files));
+  file_put_contents($dl_path[$i]."package.list",str_replace($dl_path[$i],"",implode("\n", $files)));
 }
 
 $list = array();

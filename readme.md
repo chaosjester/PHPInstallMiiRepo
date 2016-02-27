@@ -12,6 +12,8 @@ The index has a download link to the repo.list, the package.list and packages.js
 
 Requirements:
 
+Homebrew apps MUST be in a folder names 3ds under the reporoot directory
+
 Apache
 
 suPHP. phpfcgi or other system that will execute the PHP as your account (may be required by shared host users)
