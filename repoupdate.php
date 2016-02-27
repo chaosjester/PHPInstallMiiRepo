@@ -89,8 +89,7 @@ $i=0;
 for($i;$i < sizeof($apps);$i++) {
   $files = listdir(substr($dl_path[$i],0,-1));
   sort($files, SORT_LOCALE_STRING);
-  $package = implode("\n", $files);
-  file_put_contents($dl_path[$i]."package.list",$package);
+  file_put_contents($dl_path[$i]."package.list",implode("\n", $files));
 }
 
 $list = array();
