@@ -6,13 +6,6 @@ require ('reposettings.php');
 $repofile = '{"repos":[{"name":"'.$reponame.'","url":"'.$repourl.'"}]}';
 file_put_contents($reporoot.'/repo.list', $repofile);
 
-// Create Shell Script to create package.list
-$packagefile = 'for d in '.$repodir.'/*; do cd ${d} && rm -f package.* && find . -type f | sed s,^./,, > package.tmp && sed "/package.tmp/d" package.tmp > package.list && rm package.tmp  && cd ..; done';
-file_put_contents($repodir.'/packagelistgen.sh', $packagefile);
-
-// Run shell script to create package.list
-shell_exec('chmod +x '.$repodir.'/packagelistgen.sh');
-shell_exec($repodir.'/packagelistgen.sh');
 ?>
 <!DOCTYPE html>
 <html>
@@ -63,6 +56,42 @@ for($i;$i <=sizeof($apps)-1;$i++) { // removing apps from the array if they don'
 sort($apps);
 sort($dl_path);
 sort($info_path);
+
+// The 2 following functions were posted by frasq@frasq.org here: http://php.net/manual/en/function.readdir.php#100710
+function listdir($dir='.') {
+  $files = array();
+  listdiraux($dir, $files);
+  return $files;
+}
+
+function listdiraux($dir, &$files) {
+  $handle = opendir($dir);
+  while (($file = readdir($handle)) !== false) {
+    if ($file == '.' || $file == '..') {
+      continue;
+    }
+    $filepath = $dir == '.' ? $file : $dir . '/' . $file;
+    if (is_link($filepath))
+      continue;
+    if (is_file($filepath))
+      $files[] = $filepath;
+    else if (is_dir($filepath))
+      listdiraux($filepath, $files);
+  }
+  closedir($handle);
+}
+
+$i=0;
+for($i;$i < sizeof($apps);$i++) {
+  $files = listdir(substr($dl_path[$i],0,-1));
+  sort($files, SORT_LOCALE_STRING);
+  $package = fopen($dl_path[$i]."package.list","w");
+  $j = 0;
+  for($j;$j < sizeof($files); $j++) {
+    fwrite($package, $files[$j]."\n");
+  }
+  fclose($package);
+}
 
 $list = array();
 $i = 0;
