@@ -12,7 +12,7 @@ The index has a download link to the repo.list, the package.list and packages.js
 
 Requirements:
 
-Homebrew apps MUST be in a folder names 3ds under the reporoot directory
+Homebrew apps MUST be in a folder named 3ds under the reporoot directory
 
 Apache
 
