@@ -1,0 +1,16 @@
+  body {
+
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  main {
+  	background-image: url("3ds.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    flex: 1 0 auto;
+  }
+#cardpad {
+	padding: 10px 10px 10px 10px;
+}
